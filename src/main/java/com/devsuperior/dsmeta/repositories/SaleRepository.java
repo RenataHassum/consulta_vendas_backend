@@ -1,6 +1,7 @@
 package com.devsuperior.dsmeta.repositories;
 
 import com.devsuperior.dsmeta.projections.SaleReportProjection;
+import com.devsuperior.dsmeta.projections.SaleSummaryProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.devsuperior.dsmeta.entities.Sale;
@@ -17,6 +18,8 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             "GROUP BY tb_sales.id, tb_sales.date,  tb_sales.amount, tb_seller.name " +
             "ORDER BY tb_sales.date DESC")
     List<SaleReportProjection> searchReport(LocalDate minDate, LocalDate maxDate, String name);
+
+    List<SaleSummaryProjection> searchSummary(LocalDate minDate, LocalDate maxDate);
 
 
 
