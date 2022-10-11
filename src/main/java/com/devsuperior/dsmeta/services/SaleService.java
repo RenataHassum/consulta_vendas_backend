@@ -8,7 +8,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.devsuperior.dsmeta.dto.SaleReportDTO;
+import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import com.devsuperior.dsmeta.projections.SaleReportProjection;
+import com.devsuperior.dsmeta.projections.SaleSummaryProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +42,17 @@ public class SaleService {
 
 		List<SaleReportProjection> result = repository.searchReport(min, max, name);
 		return result.stream().map(x -> new SaleReportDTO(x)).collect(Collectors.toList());
+	}
+
+	@Transactional(readOnly = true)
+	public List<SaleSummaryDTO> getSummary(String minDate, String maxDate) {
+		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		LocalDate overAYear = today.minusYears(1L);
+
+		LocalDate min = "".equals(minDate) ? overAYear : LocalDate.parse(minDate);
+		LocalDate max = "".equals(maxDate) ? today : LocalDate.parse(maxDate);
+
+		List<SaleSummaryProjection> result = repository.searchSummary(min, max);
+		return result.stream().map(x -> new SaleSummaryDTO(x)).collect(Collectors.toList());
 	}
 }
