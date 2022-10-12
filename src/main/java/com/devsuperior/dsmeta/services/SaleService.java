@@ -12,6 +12,8 @@ import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import com.devsuperior.dsmeta.projections.SaleReportProjection;
 import com.devsuperior.dsmeta.projections.SaleSummaryProjection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
@@ -33,26 +35,26 @@ public class SaleService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<SaleReportDTO> getReport(String minDate, String maxDate, String name) {
+	public Page<SaleReportDTO> getReportPage(String minDate, String maxDate, String name, Pageable pageable) {
 		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
 		LocalDate overAYear = today.minusYears(1L);
 
 		LocalDate min = "".equals(minDate) ? overAYear : LocalDate.parse(minDate);
 		LocalDate max = "".equals(maxDate) ? today : LocalDate.parse(maxDate);
 
-		List<SaleReportProjection> result = repository.searchReport(min, max, name);
-		return result.stream().map(x -> new SaleReportDTO(x)).collect(Collectors.toList());
+		Page<SaleReportProjection> result = repository.searchReportPage(min, max, name, pageable);
+		return result.map(x -> new SaleReportDTO(x));
 	}
 
 	@Transactional(readOnly = true)
-	public List<SaleSummaryDTO> getSummary(String minDate, String maxDate) {
+	public List<SaleSummaryDTO> searchSummaryList(String minDate, String maxDate) {
 		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
 		LocalDate overAYear = today.minusYears(1L);
 
 		LocalDate min = "".equals(minDate) ? overAYear : LocalDate.parse(minDate);
 		LocalDate max = "".equals(maxDate) ? today : LocalDate.parse(maxDate);
 
-		List<SaleSummaryProjection> result = repository.searchSummary(min, max);
+		List<SaleSummaryProjection> result = repository.searchSummaryList(min, max);
 		return result.stream().map(x -> new SaleSummaryDTO(x)).collect(Collectors.toList());
 	}
 }
