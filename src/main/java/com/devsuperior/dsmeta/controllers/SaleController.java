@@ -45,4 +45,6 @@ public class SaleController {
 		List<SaleSummaryDTO> dto = service.searchSummaryList(minDate, maxDate);
 		return ResponseEntity.ok(dto);
 	}
+
+
 }

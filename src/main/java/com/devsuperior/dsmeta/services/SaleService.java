@@ -36,25 +36,30 @@ public class SaleService {
 
 	@Transactional(readOnly = true)
 	public Page<SaleReportDTO> getReportPage(String minDate, String maxDate, String name, Pageable pageable) {
-		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
-		LocalDate overAYear = today.minusYears(1L);
-
-		LocalDate min = "".equals(minDate) ? overAYear : LocalDate.parse(minDate);
-		LocalDate max = "".equals(maxDate) ? today : LocalDate.parse(maxDate);
-
+		LocalDate min = convertMinDate(minDate);
+		LocalDate max = convertMaxDate(maxDate);
 		Page<SaleReportProjection> result = repository.searchReportPage(min, max, name, pageable);
 		return result.map(x -> new SaleReportDTO(x));
 	}
 
 	@Transactional(readOnly = true)
 	public List<SaleSummaryDTO> searchSummaryList(String minDate, String maxDate) {
-		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
-		LocalDate overAYear = today.minusYears(1L);
-
-		LocalDate min = "".equals(minDate) ? overAYear : LocalDate.parse(minDate);
-		LocalDate max = "".equals(maxDate) ? today : LocalDate.parse(maxDate);
-
+		LocalDate min = convertMinDate(minDate);
+		LocalDate max = convertMaxDate(maxDate);
 		List<SaleSummaryProjection> result = repository.searchSummaryList(min, max);
 		return result.stream().map(x -> new SaleSummaryDTO(x)).collect(Collectors.toList());
+	}
+
+	private LocalDate convertMinDate(String minDate) {
+		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		LocalDate overYear = today.minusYears(1L);
+		LocalDate min = "".equals(minDate) ? overYear : LocalDate.parse(minDate);
+		return min;
+	}
+
+	private LocalDate convertMaxDate(String maxDate) {
+		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		LocalDate max = "".equals(maxDate) ? today : LocalDate.parse(maxDate);
+		return max;
 	}
 }
