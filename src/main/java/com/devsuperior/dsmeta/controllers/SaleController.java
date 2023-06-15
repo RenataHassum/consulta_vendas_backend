@@ -2,6 +2,7 @@ package com.devsuperior.dsmeta.controllers;
 
 import com.devsuperior.dsmeta.dto.SaleReportDTO;
 import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
+import com.devsuperior.dsmeta.services.SmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,14 @@ public class SaleController {
 
 	@Autowired
 	private SaleService service;
+
+	@Autowired
+	private SmsService smsService;
+
+	@GetMapping("/{id}/notification")
+	public void notifySms(@PathVariable Long id) {
+		smsService.sendSms(id);
+	}
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<SaleMinDTO> findById(@PathVariable Long id) {

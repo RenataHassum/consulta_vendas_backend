@@ -26,3 +26,4 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             "ORDER BY tb_seller.name")
     List<SaleSummaryProjection> searchSummaryList(LocalDate minDate, LocalDate maxDate);
 }
+
